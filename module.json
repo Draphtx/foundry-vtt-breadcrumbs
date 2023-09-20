@@ -1,0 +1,60 @@
+{
+    "title": "Foundry VTT Breadcrumbs",
+    "name": "breadcrumbs",
+    "id": "breadcrumbs",
+    "description": "Enables breadcrumb tracking for token movement",
+    "authors": [
+      {
+        "name": "draphtx",
+        "email": "draphtx@gmail.com",
+        "url": "https://www.buymeacoffee.com/draphtx"
+      }
+    ],
+    "version": "1.0.0",
+    "minimumCoreVersion" : "10.291",
+    "compatibleCoreVersion" : 10,
+    "compatibility": {
+        "minimum": "10",
+        "verified": "10"
+    },
+    "scripts": [
+      "scripts/config.js"
+    ],
+    "esmodules": [
+      "scripts/init.js",
+      "scripts/loadouts.js",
+      "scripts/hooks.js",
+      "scripts/loadoutsDialogs.js"
+    ],
+    "languages": [
+      {
+        "lang": "en",
+        "name": "English",
+        "path": "languages/en.json"
+      }
+    ],
+    "packs": [
+      {
+        "name": "breadcrumbs-macros",
+        "label": "Breadcrumbs Macros",
+        "path": "packs/macros/macros.db",
+        "type": "Macro",
+        "private": false
+      }
+    ],
+    "media": [
+      {
+          "type": "cover",
+          "link": "https://raw.githubusercontent.com/Draphtx/foundry-vtt-loadouts/continuous/artwork/module/loadouts-cover.png"
+      },
+      {
+          "type": "screenshot",
+          "link": "https://raw.githubusercontent.com/Draphtx/foundry-vtt-loadouts/continuous/artwork/module/screenshot-v2.1.9a.png"
+      }
+    ],
+    "url": "#{URL}#",
+    "manifest": "#{MANIFEST}#",
+    "download": "#{DOWNLOAD}#",
+    "license": "LICENSE",
+    "readme": "README.md"
+  }
