@@ -43,7 +43,7 @@ function getRotationAngle(oldX, oldY, newX, newY) {
   }
 }
 
-Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, userId) {
+Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     let movementDirection = undefined
     const hasBreadcrumbsEnabled = tokenDocument.parent.flags?.breadcrumbs?.enabled;
     const hasPositionUpdate = updateData.y || updateData.x;

@@ -14,6 +14,7 @@ Hooks.once("init", function () {  // Due to some of the calls we make to populat
         hint: "Per-scene images can be configured using the scene configuration macro",
         scope: "world",
         config: true,
+        filePicker: true,
         default: 'assets/breadcrumbs/breadcrumbs-arrow.webp',
         type: String
     });

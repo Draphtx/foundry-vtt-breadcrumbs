@@ -1,8 +1,31 @@
 const currentScene = game.scenes.current
 
+async function fileBrowser() {
+    const path = 'modules/breadcrumps/artwork';
+    new FilePicker({
+        type: 'image',
+        current: path,
+        callback: null,
+    }).browse();
+}
+
 const loadoutsTileDialog = new Dialog({
     title: "Breadcrumbs", 
     content:`
+    <script>
+        async function fileBrowser() {
+            const path = 'modules/breadcrumbs/artwork';
+            new FilePicker({
+                type: 'image',
+                current: path,
+                callback: imagePath => {
+                    // Update the input field's value with the selected imagePath
+                    // document.querySelector('[name="breadcrumbsImage"]').value = imagePath;
+                    document.getElementById("browseButton").textContent = imagePath;
+                },
+            }).browse();
+    }
+    </script>
     <script type="text/javascript">
         function limitTrailLength(obj){
             if (obj.value.length > 2){
@@ -25,8 +48,8 @@ const loadoutsTileDialog = new Dialog({
     </div>
     
     <div class="form-group">
-      <label>Breadcrumbs Image</label>
-      <input type='text' name='breadcrumbsImage' value='` + game.settings.get("breadcrumbs", "breadcrumbs-default-image") + `'></input>
+        <label>Breadcrumbs Image Path</label>
+        <button id="browseButton" onclick="fileBrowser()">` + game.settings.get("breadcrumbs", "breadcrumbs-default-image") + `</button>
     </div>
 
     <!-- Range input-->
@@ -55,7 +78,7 @@ const loadoutsTileDialog = new Dialog({
             label: `Apply Changes` ,
             callback: html => {setupBreadcrumbsScene(
                 html.find('[name="enableBreadcrumbs"]').val(),
-                html.find('[name="breadcrumbsImage"]').val(),
+                html.find("#browseButton").text(),
                 html.find('[name="breadcrumbsScale"]').val(),
                 html.find('[name="trailLength"]').val()
             )}   
