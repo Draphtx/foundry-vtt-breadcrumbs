@@ -1,27 +1,16 @@
 const currentScene = game.scenes.current
 
-async function fileBrowser() {
-    const path = 'modules/breadcrumps/artwork';
-    new FilePicker({
-        type: 'image',
-        current: path,
-        callback: null,
-    }).browse();
-}
-
 const loadoutsTileDialog = new Dialog({
     title: "Breadcrumbs", 
     content:`
     <script>
         async function fileBrowser() {
-            const path = 'modules/breadcrumbs/artwork';
+            const path = '` + game.settings.get("breadcrumbs", "breadcrumbs-default-image") + `';
             new FilePicker({
                 type: 'image',
                 current: path,
                 callback: imagePath => {
-                    // Update the input field's value with the selected imagePath
-                    // document.querySelector('[name="breadcrumbsImage"]').value = imagePath;
-                    document.getElementById("browseButton").textContent = imagePath;
+                    document.getElementById("breadcrumbsImagePreview").src = imagePath;
                 },
             }).browse();
     }
@@ -48,8 +37,10 @@ const loadoutsTileDialog = new Dialog({
     </div>
     
     <div class="form-group">
-        <label>Breadcrumbs Image Path</label>
-        <button id="browseButton" onclick="fileBrowser()">` + game.settings.get("breadcrumbs", "breadcrumbs-default-image") + `</button>
+        <label>Breadcrumbs Image</label>
+        <button onclick="fileBrowser()">
+            <img id="breadcrumbsImagePreview" src="` + game.settings.get("breadcrumbs", "breadcrumbs-default-image") + `" style="width: 50px; height: 50px;">
+        </button>
     </div>
 
     <!-- Range input-->
@@ -78,7 +69,7 @@ const loadoutsTileDialog = new Dialog({
             label: `Apply Changes` ,
             callback: html => {setupBreadcrumbsScene(
                 html.find('[name="enableBreadcrumbs"]').val(),
-                html.find("#browseButton").text(),
+                html.find("#breadcrumbsImagePreview").attr("src"),
                 html.find('[name="breadcrumbsScale"]').val(),
                 html.find('[name="trailLength"]').val()
             )}   
