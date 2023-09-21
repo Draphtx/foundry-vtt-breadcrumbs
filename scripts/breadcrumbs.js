@@ -1,0 +1,100 @@
+Hooks.on("createToken", function(tokenDocument, options, userId) {
+    if(tokenDocument.actor.flags?.breadcrumbs) {
+        console.info("Found Breadcrumbs actor")
+        tokenDocument.update({
+            flags: {
+                breadcrumbs: {
+                    trail: {
+                        id: tokenDocument.parent.id + "-" + tokenDocument.id
+                    },
+                    position: {
+                        last_x: tokenDocument.x, 
+                        last_y: tokenDocument.y
+                    }
+                }
+            }
+        });
+    };
+    Hooks.off("createToken");
+});
+
+function getRotationAngle(oldX, oldY, newX, newY) {
+  let dx = newX - oldX;
+  let dy = newY - oldY;
+
+  if (dx === 0 && dy > 0) {
+    return 0;  // South
+  } else if (dx > 0 && dy < 0) {
+    return 225;  // North-East
+  } else if (dx < 0 && dy > 0) {
+    return 45;  // South-West
+  } else if (dx > 0 && dy === 0) {
+    return 270;  // West
+  } else if (dx < 0 && dy < 0) {
+    return 135;  // North-West
+  } else if (dx === 0 && dy < 0) {
+    return 180;  // North
+  } else if (dx < 0 && dy === 0) {
+    return 90;  // East
+  } else if (dx > 0 && dy > 0) {
+    return 315;  // South-East
+  } else {
+    return null;  // Token didn't move or moved in an unexpected way
+  }
+}
+
+Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
+    let movementDirection = undefined
+    const hasBreadcrumbsEnabled = tokenDocument.parent.flags?.breadcrumbs?.enabled;
+    const hasPositionUpdate = updateData.y || updateData.x;
+    
+    if (hasBreadcrumbsEnabled && hasPositionUpdate) {
+        movementDirection = getRotationAngle(tokenDocument.flags.breadcrumbs.position.last_x, tokenDocument.flags.breadcrumbs.position.last_y, tokenDocument.x, tokenDocument.y);
+        tokenDocument.update({
+            flags: {
+                breadcrumbs: {
+                    position: {
+                        last_x: tokenDocument.x, 
+                        last_y: tokenDocument.y
+                    }
+                }
+            }
+        });
+    } else { return; };
+    console.debug("Breadcrumbs token moved at angle " + movementDirection);
+    breadcrumbsTileDefinition = {
+        flags: {
+            breadcrumbs: {
+                trail: {
+                    id: tokenDocument.parent.id + "-" + tokenDocument.id,
+                    timestamp: Date.now()
+                },
+            }
+        },
+        texture: {
+            src: tokenDocument.parent.flags.breadcrumbs.image || game.settings.get("breadcrumbs", "breadcrumbs-default-image"),
+            rotation: 0
+        },
+        x: tokenDocument.x,
+        y: tokenDocument.y,
+        width: 100,
+        height: 100,
+        scaleX: tokenDocument.parent.flags.breadcrumbs.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
+        scaleY: tokenDocument.parent.flags.breadcrumbs.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
+        rotation: movementDirection
+    };
+
+    await tokenDocument.parent.createEmbeddedDocuments("Tile", [breadcrumbsTileDefinition]);
+
+    // Check the trail length for user-defined limits
+    let userDefinedMax = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
+    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
+    existingBreadcrumbs.sort((a, b) => a.flags.breadcrumbs.trail.timestamp - b.flags.breadcrumbs.trail.timestamp);
+
+    while (existingBreadcrumbs.length > userDefinedMax) {
+        let oldestTile = existingBreadcrumbs.shift();  // Removes the first (oldest) tile from the array
+        oldestTile.delete();
+    };
+
+    Hooks.off("updateToken");
+});
