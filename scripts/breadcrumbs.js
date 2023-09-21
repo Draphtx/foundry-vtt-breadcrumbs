@@ -4,6 +4,7 @@ Hooks.on("createToken", function(tokenDocument, options, userId) {
         tokenDocument.update({
             flags: {
                 breadcrumbs: {
+                    trail: tokenDocument.parent.id + "-" + tokenDocument.actor.id,
                     position: {
                         last_x: tokenDocument.x, 
                         last_y: tokenDocument.y
@@ -47,7 +48,6 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, user
         tokenDocument.update({
             flags: {
                 breadcrumbs: {
-                    trail_id: tokenDocument.parent.id + "-" + tokenDocument.actor.id,
                     position: {
                         last_x: tokenDocument.x, 
                         last_y: tokenDocument.y
@@ -58,8 +58,13 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, user
     } else { return; };
     console.log("Breadcrumbs token moved " + movementDirection);
     breadcrumbsTileDefinition = {
+        flags: {
+            breadcrumbs: {
+                trail: tokenDocument.parent.id + "-" + tokenDocument.actor.id,
+                timestamp: Date.now()
+            }
+        },
         texture: {
-            // src: game.settings.get("breadcrumbs", "breadcrumbs-default-image"),
             src: tokenDocument.parent.flags.breadcrumbs.image || game.settings.get("breadcrumbs", "breadcrumbs-default-image"),
             rotation: 0
         },
