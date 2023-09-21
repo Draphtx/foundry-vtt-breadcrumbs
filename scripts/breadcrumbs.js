@@ -4,7 +4,9 @@ Hooks.on("createToken", function(tokenDocument, options, userId) {
         tokenDocument.update({
             flags: {
                 breadcrumbs: {
-                    trail: tokenDocument.parent.id + "-" + tokenDocument.actor.id,
+                    trail: {
+                        id: tokenDocument.parent.id + "-" + tokenDocument.actor.id
+                    },
                     position: {
                         last_x: tokenDocument.x, 
                         last_y: tokenDocument.y
@@ -43,7 +45,11 @@ function getRotationAngle(oldX, oldY, newX, newY) {
 
 Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, userId) {
     let movementDirection = undefined
-    if((tokenDocument.actor.flags?.breadcrumbs) && ((updateData.y) || (updateData.x)) && (tokenDocument.parent.flags?.breadcrumbs?.enabled == true)) {
+    const hasBreadcrumbsFlag = tokenDocument.actor.flags?.breadcrumbs;
+    const hasPositionUpdate = updateData.y || updateData.x;
+    const breadcrumbsEnabled = tokenDocument.parent.flags?.breadcrumbs?.enabled;
+
+    if (hasBreadcrumbsFlag && hasPositionUpdate && breadcrumbsEnabled) {
         movementDirection = getRotationAngle(tokenDocument.flags.breadcrumbs.position.last_x, tokenDocument.flags.breadcrumbs.position.last_y, tokenDocument.x, tokenDocument.y);
         tokenDocument.update({
             flags: {
@@ -60,8 +66,10 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, user
     breadcrumbsTileDefinition = {
         flags: {
             breadcrumbs: {
-                trail: tokenDocument.parent.id + "-" + tokenDocument.actor.id,
-                timestamp: Date.now()
+                trail: {
+                    id: tokenDocument.parent.id + "-" + tokenDocument.actor.id,
+                    timestamp: Date.now()
+                },
             }
         },
         texture: {
