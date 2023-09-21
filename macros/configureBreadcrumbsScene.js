@@ -20,7 +20,7 @@ const loadoutsTileDialog = new Dialog({
     <div class="form-group">
       <label class="col-md-4 control-label" for="enableBreadcrumbs">Enable Breadcrumbs</label>  
       <div class="col-md-4">
-      <input id="enableBreadcrumbs" name="enableBreadcrumbs" type="checkbox"></input>
+      <input id="enableBreadcrumbs" name="enableBreadcrumbs" type="checkbox" checked></input>
       </div>
     </div>
     
@@ -28,8 +28,6 @@ const loadoutsTileDialog = new Dialog({
       <label>Breadcrumbs Image</label>
       <input type='text' name='breadcrumbsImage' value='` + game.settings.get("breadcrumbs", "breadcrumbs-default-image") + `'></input>
     </div>
-    </fieldset>
-    </form>
 
     <!-- Range input-->
     <div class="form-group">
