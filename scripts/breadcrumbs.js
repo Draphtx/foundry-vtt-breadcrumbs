@@ -45,11 +45,10 @@ function getRotationAngle(oldX, oldY, newX, newY) {
 
 Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, userId) {
     let movementDirection = undefined
-    const hasBreadcrumbsFlag = tokenDocument.actor.flags?.breadcrumbs;
+    const hasBreadcrumbsEnabled = tokenDocument.parent.flags?.breadcrumbs?.enabled;
     const hasPositionUpdate = updateData.y || updateData.x;
-    const breadcrumbsEnabled = tokenDocument.parent.flags?.breadcrumbs?.enabled;
-
-    if (hasBreadcrumbsFlag && hasPositionUpdate && breadcrumbsEnabled) {
+    
+    if (hasBreadcrumbsEnabled && hasPositionUpdate) {
         movementDirection = getRotationAngle(tokenDocument.flags.breadcrumbs.position.last_x, tokenDocument.flags.breadcrumbs.position.last_y, tokenDocument.x, tokenDocument.y);
         tokenDocument.update({
             flags: {
@@ -62,7 +61,7 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, user
             }
         });
     } else { return; };
-    console.log("Breadcrumbs token moved " + movementDirection);
+    console.debug("Breadcrumbs token moved " + movementDirection);
     breadcrumbsTileDefinition = {
         flags: {
             breadcrumbs: {
