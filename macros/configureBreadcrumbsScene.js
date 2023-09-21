@@ -55,7 +55,7 @@ const loadoutsTileDialog = new Dialog({
 
     <div class="form-group">
       <label for="trailLength">Max Trail Length</label>
-      <input type="number" id="trailLength" name="trailLength" value="50" min="0" max="99" oninput="limitTrailLength(this)">
+      <input type="number" id="trailLength" name="trailLength" value="` + game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length") + `" min="0" max="99" oninput="limitTrailLength(this)">
     </div>
     `,
       buttons: {
