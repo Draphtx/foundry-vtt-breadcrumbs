@@ -61,7 +61,7 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, user
             }
         });
     } else { return; };
-    console.debug("Breadcrumbs token moved " + movementDirection);
+    console.debug("Breadcrumbs token moved at angle " + movementDirection);
     breadcrumbsTileDefinition = {
         flags: {
             breadcrumbs: {
@@ -79,12 +79,22 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, user
         y: tokenDocument.y,
         width: 100,
         height: 100,
-        scaleX: 1,
-        scaleY: 1,
+        scaleX: tokenDocument.parent.flags.breadcrumbs.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
+        scaleY: tokenDocument.parent.flags.breadcrumbs.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
         rotation: movementDirection
     };
 
-    // let tileDocument = await tokenDocument.parent.getTileDocument(breadcrumbsTileDefinition);
-    const addedToken = await tokenDocument.parent.createEmbeddedDocuments("Tile", [breadcrumbsTileDefinition]);
+    await tokenDocument.parent.createEmbeddedDocuments("Tile", [breadcrumbsTileDefinition]);
+
+    // Check the trail length for user-defined limits
+    let userDefinedMax = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
+    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.actor.id);
+    existingBreadcrumbs.sort((a, b) => a.flags.breadcrumbs.trail.timestamp - b.flags.breadcrumbs.trail.timestamp);
+
+    while (existingBreadcrumbs.length > userDefinedMax) {
+        let oldestTile = existingBreadcrumbs.shift();  // Removes the first (oldest) tile from the array
+        oldestTile.delete();
+    };
+
     Hooks.off("updateToken");
 });

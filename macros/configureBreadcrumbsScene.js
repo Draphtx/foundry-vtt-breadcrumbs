@@ -4,7 +4,7 @@ const loadoutsTileDialog = new Dialog({
     title: "Breadcrumbs", 
     content:`
     <script type="text/javascript">
-        function limitWeightLength(obj){
+        function limitTrailLength(obj){
             if (obj.value.length > 2){
                 obj.value = obj.value.slice(0,2); 
             }
@@ -30,6 +30,21 @@ const loadoutsTileDialog = new Dialog({
     </div>
     </fieldset>
     </form>
+
+    <!-- Range input-->
+    <div class="form-group">
+      <label class="col-md-4 control-label" for="breadcrumbsScale">Breadcrumbs Scale</label>  
+      <div class="col-md-4">
+      <input id="breadcrumbsScale" name="breadcrumbsScale" type="range" min="0.1" max="1" step="0.1" defaultValue="1" value="1" oninput="document.getElementById('rangeValLabel').innerHTML = this.value;"></input>
+      <span class="help-block">Scale: </span>
+      <em id="rangeValLabel" style="font-style: normal;">1</em>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="trailLength">Max Trail Length</label>
+      <input type="number" id="trailLength" name="trailLength" value="50" min="0" max="99" oninput="limitTrailLength(this)">
+    </div>
     `,
       buttons: {
         cancel: {
@@ -42,18 +57,27 @@ const loadoutsTileDialog = new Dialog({
             label: `Apply Changes` ,
             callback: html => {setupBreadcrumbsScene(
                 html.find('[name="enableBreadcrumbs"]').val(),
-                html.find('[name="breadcrumbsImage"]').val()
+                html.find('[name="breadcrumbsImage"]').val(),
+                html.find('[name="breadcrumbsScale"]').val(),
+                html.find('[name="trailLength"]').val()
             )}   
             }
       },
       default: 'apply',
 }).render(true);
 
-async function setupBreadcrumbsScene(enableBreadcrumbs, breadcrumbsImage){
+async function setupBreadcrumbsScene(enableBreadcrumbs, breadcrumbsImage, breadcrumbsScale, trailLength){
     currentScene.update({
         "flags.breadcrumbs": {
-            "enabled": true,
-            "image": breadcrumbsImage
+            "enabled": enableBreadcrumbs,
+            "image": breadcrumbsImage,
+            "scale": breadcrumbsScale,
+            "trails": {
+                "length": {
+                    max: Number(trailLength)
+                }
+
+            }
         }
     });
 };
