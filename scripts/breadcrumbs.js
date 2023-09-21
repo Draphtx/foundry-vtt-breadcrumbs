@@ -5,7 +5,7 @@ Hooks.on("createToken", function(tokenDocument, options, userId) {
             flags: {
                 breadcrumbs: {
                     trail: {
-                        id: tokenDocument.parent.id + "-" + tokenDocument.actor.id
+                        id: tokenDocument.parent.id + "-" + tokenDocument.id
                     },
                     position: {
                         last_x: tokenDocument.x, 
@@ -66,7 +66,7 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, user
         flags: {
             breadcrumbs: {
                 trail: {
-                    id: tokenDocument.parent.id + "-" + tokenDocument.actor.id,
+                    id: tokenDocument.parent.id + "-" + tokenDocument.id,
                     timestamp: Date.now()
                 },
             }
@@ -88,7 +88,7 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, diffData, user
 
     // Check the trail length for user-defined limits
     let userDefinedMax = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
-    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.actor.id);
+    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
     existingBreadcrumbs.sort((a, b) => a.flags.breadcrumbs.trail.timestamp - b.flags.breadcrumbs.trail.timestamp);
 
     while (existingBreadcrumbs.length > userDefinedMax) {
