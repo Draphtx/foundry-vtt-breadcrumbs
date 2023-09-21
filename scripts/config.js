@@ -15,7 +15,7 @@ Hooks.once("init", function () {  // Due to some of the calls we make to populat
         scope: "world",
         config: true,
         filePicker: true,
-        default: 'assets/breadcrumbs/breadcrumbs-arrow.webp',
+        default: 'modules/breadcrumbs/shoeprints.webp',
         type: String
     });
 
