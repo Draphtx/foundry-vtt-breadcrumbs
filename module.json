@@ -18,13 +18,8 @@
         "verified": "10"
     },
     "scripts": [
-      "scripts/config.js"
-    ],
-    "esmodules": [
-      "scripts/init.js",
-      "scripts/loadouts.js",
-      "scripts/hooks.js",
-      "scripts/loadoutsDialogs.js"
+        "scripts/breadcrumbs.js",
+        "scripts/config.js"
     ],
     "languages": [
       {
@@ -37,7 +32,7 @@
       {
         "name": "breadcrumbs-macros",
         "label": "Breadcrumbs Macros",
-        "path": "packs/macros/macros.db",
+        "path": "packs/macros/breadcrumbs.db",
         "type": "Macro",
         "private": false
       }
@@ -45,7 +40,7 @@
     "media": [
       {
           "type": "cover",
-          "link": "https://raw.githubusercontent.com/Draphtx/foundry-vtt-loadouts/continuous/artwork/module/loadouts-cover.png"
+          "link": "https://raw.githubusercontent.com/Draphtx/foundry-vtt-breadcrumbs/continuous/artwork/module/breadcrumbs-cover.png"
       },
       {
           "type": "screenshot",
