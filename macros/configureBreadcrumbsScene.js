@@ -37,6 +37,13 @@ const loadoutsTileDialog = new Dialog({
     </div>
     
     <div class="form-group">
+      <label class="col-md-4 control-label" for="overrideActors">Override Actors</label>  
+      <div class="col-md-4">
+      <input id="overrideActors" name="overrideActors" type="checkbox"></input>
+      </div>
+    </div>
+
+    <div class="form-group">
         <label>Breadcrumbs Image</label>
         <button onclick="fileBrowser()">
             <img id="breadcrumbsImagePreview" src="` + game.settings.get("breadcrumbs", "breadcrumbs-default-image") + `" style="width: 50px; height: 50px;">
@@ -69,6 +76,7 @@ const loadoutsTileDialog = new Dialog({
             label: `Apply Changes` ,
             callback: html => {setupBreadcrumbsScene(
                 html.find('[name="enableBreadcrumbs"]').val(),
+                html.find('[name="overrideActors"]').val(),
                 html.find("#breadcrumbsImagePreview").attr("src"),
                 html.find('[name="breadcrumbsScale"]').val(),
                 html.find('[name="trailLength"]').val()
@@ -79,9 +87,12 @@ const loadoutsTileDialog = new Dialog({
 }).render(true);
 
 async function setupBreadcrumbsScene(enableBreadcrumbs, breadcrumbsImage, breadcrumbsScale, trailLength){
+    const enableBreadcrumbsCheckbox = document.getElementById('enableBreadcrumbs');
+    const overrideActorsCheckbox = document.getElementById('overrideActors');
     currentScene.update({
         "flags.breadcrumbs": {
-            enabled: enableBreadcrumbs,
+            enabled: enableBreadcrumbsCheckbox.checked,
+            override_actors: overrideActorsCheckbox.checked,
             actors: {
                 default: {
                     src: breadcrumbsImage,

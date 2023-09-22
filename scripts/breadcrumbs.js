@@ -63,7 +63,20 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     } else { return; };
     console.debug("Breadcrumbs token moved at angle " + movementDirection);
 
-    let actorSettings = tokenDocument.parent.flags.breadcrumbs.actors[tokenDocument.actor.id] || tokenDocument.parent.flags.breadcrumbs.actors.default
+    function getMergedBreadcrumbsSettings(actorDocument, sceneDocument) {
+      let actorSettings = Object.assign({}, actorDocument.flags.breadcrumbs);
+  
+      if (sceneDocument.flags.breadcrumbs.override_actors) {
+          actorSettings = Object.assign(actorSettings, sceneDocument.flags.breadcrumbs.actors.default);
+          if (sceneDocument.flags.breadcrumbs.actors[actorDocument.id]) {
+              actorSettings = Object.assign(actorSettings, sceneDocument.flags.breadcrumbs.actors[actorDocument.id]);
+          }
+      };
+  
+      return actorSettings;
+    };
+
+    const actorSettings = getMergedBreadcrumbsSettings(tokenDocument.actor, tokenDocument.parent);
     breadcrumbsTileDefinition = {
         flags: {
             breadcrumbs: {
