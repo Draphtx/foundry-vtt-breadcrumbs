@@ -1,6 +1,6 @@
 Hooks.on("createToken", function(tokenDocument, options, userId) {
-    if(tokenDocument.actor.flags?.breadcrumbs) {
-        console.info("Found Breadcrumbs actor")
+    if((tokenDocument.actor.flags?.breadcrumbs?.enabled == true) || (tokenDocument.flags?.breadcrumbs?.enabled == true)) {
+        console.info("Found Breadcrumbs token")
         tokenDocument.update({
             flags: {
                 breadcrumbs: {
@@ -41,7 +41,7 @@ function getRotationAngle(oldX, oldY, newX, newY) {
   } else {
     return null;  // Token didn't move or moved in an unexpected way
   }
-}
+};
 
 Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     let movementDirection = undefined
@@ -64,17 +64,26 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     console.debug("Breadcrumbs token moved at angle " + movementDirection);
 
     function getMergedBreadcrumbsSettings(actorDocument, sceneDocument) {
-      let actorSettings = Object.assign({}, actorDocument.flags.breadcrumbs);
-  
-      if (sceneDocument.flags.breadcrumbs.override_actors) {
-          actorSettings = Object.assign(actorSettings, sceneDocument.flags.breadcrumbs.actors.default);
-          if (sceneDocument.flags.breadcrumbs.actors[actorDocument.id]) {
-              actorSettings = Object.assign(actorSettings, sceneDocument.flags.breadcrumbs.actors[actorDocument.id]);
-          }
+      // Default settings, can be extended if there are other defaults
+      const defaultSettings = {
+          src: null,
+          scale: undefined,
+          tint: undefined,
       };
   
-      return actorSettings;
-    };
+      const actorSettings = actorDocument?.flags?.breadcrumbs || defaultSettings;
+      const sceneActorSettings = sceneDocument?.flags?.breadcrumbs?.actors?.[actorDocument._id] || {};
+      const sceneDefaultSettings = sceneDocument?.flags?.breadcrumbs?.actors?.default || {};
+  
+      let mergedSettings = { ...defaultSettings, ...actorSettings };  // Start with actor settings
+  
+      // If override is enabled, use scene's settings
+      if (sceneDocument?.flags?.breadcrumbs?.override_actors) {
+          mergedSettings = { ...mergedSettings, ...sceneDefaultSettings, ...sceneActorSettings };
+      }
+  
+      return mergedSettings;
+  };  
 
     const actorSettings = getMergedBreadcrumbsSettings(tokenDocument.actor, tokenDocument.parent);
     breadcrumbsTileDefinition = {
