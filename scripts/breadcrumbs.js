@@ -62,6 +62,8 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
         });
     } else { return; };
     console.debug("Breadcrumbs token moved at angle " + movementDirection);
+
+    let actorSettings = tokenDocument.parent.flags.breadcrumbs.actors[tokenDocument.actor.id] || tokenDocument.parent.flags.breadcrumbs.actors.default
     breadcrumbsTileDefinition = {
         flags: {
             breadcrumbs: {
@@ -72,26 +74,26 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
             }
         },
         texture: {
-            src: tokenDocument.parent.flags.breadcrumbs.image || game.settings.get("breadcrumbs", "breadcrumbs-default-image"),
+            src: actorSettings.src || game.settings.get("breadcrumbs", "breadcrumbs-default-image"),
             rotation: 0
         },
         x: tokenDocument.x,
         y: tokenDocument.y,
         width: 100,
         height: 100,
-        scaleX: tokenDocument.parent.flags.breadcrumbs.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
-        scaleY: tokenDocument.parent.flags.breadcrumbs.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
+        scaleX: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
+        scaleY: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
         rotation: movementDirection
     };
 
     await tokenDocument.parent.createEmbeddedDocuments("Tile", [breadcrumbsTileDefinition]);
 
     // Check the trail length for user-defined limits
-    let userDefinedMax = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
+    let maxTrailLength = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
     let existingBreadcrumbs = tokenDocument.parent.tiles.filter(tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
     existingBreadcrumbs.sort((a, b) => a.flags.breadcrumbs.trail.timestamp - b.flags.breadcrumbs.trail.timestamp);
 
-    while (existingBreadcrumbs.length > userDefinedMax) {
+    while (existingBreadcrumbs.length > maxTrailLength) {
         let oldestTile = existingBreadcrumbs.shift();  // Removes the first (oldest) tile from the array
         oldestTile.delete();
     };

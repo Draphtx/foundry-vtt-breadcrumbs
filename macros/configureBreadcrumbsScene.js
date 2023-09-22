@@ -81,11 +81,16 @@ const loadoutsTileDialog = new Dialog({
 async function setupBreadcrumbsScene(enableBreadcrumbs, breadcrumbsImage, breadcrumbsScale, trailLength){
     currentScene.update({
         "flags.breadcrumbs": {
-            "enabled": enableBreadcrumbs,
-            "image": breadcrumbsImage,
-            "scale": breadcrumbsScale,
-            "trails": {
-                "length": {
+            enabled: enableBreadcrumbs,
+            actors: {
+                default: {
+                    src: breadcrumbsImage,
+                    scale: breadcrumbsScale,
+                    tint: null
+                }
+            },
+            trails: {
+                length: {
                     max: Number(trailLength)
                 }
 
