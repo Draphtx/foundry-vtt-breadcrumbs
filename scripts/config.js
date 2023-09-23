@@ -1,4 +1,4 @@
-Hooks.once("init", function () {  // Due to some of the calls we make to populate lists, this can't register at init time
+Hooks.once("init", function () {
 
     game.settings.register("breadcrumbs", "breadcrumbs-enabled", {
         name: "Enable Breadcrumbs",

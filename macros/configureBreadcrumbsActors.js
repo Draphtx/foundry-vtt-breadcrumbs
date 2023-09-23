@@ -60,24 +60,24 @@ const loadoutsTileDialog = new Dialog({
       </div>
     </div>
     `,
-      buttons: {
-        cancel: {
-            icon: "<i class='fas fa-check'></i>",
-            label: `Cancel`,
-            callback: function(){ return; }  
-            },
-        apply: {
-            icon: "<i class='fas fa-check'></i>",
-            label: `Apply Changes` ,
-            callback: html => {setupBreadcrumbsActors(
-                html.find('[name="enableBreadcrumbs"]').val(),
-                html.find('[name="setForScene"]').val(),
-                html.find("#breadcrumbsImagePreview").attr("src"),
-                html.find('[name="breadcrumbsScale"]').val()
-            )}   
-            }
+    buttons: {
+    cancel: {
+        icon: "<i class='fas fa-check'></i>",
+        label: `Cancel`,
+        callback: function(){ return; }  
+        },
+    apply: {
+        icon: "<i class='fas fa-check'></i>",
+        label: `Apply Changes` ,
+        callback: html => {setupBreadcrumbsActors(
+            html.find('[name="enableBreadcrumbs"]').val(),
+            html.find('[name="setForScene"]').val(),
+            html.find("#breadcrumbsImagePreview").attr("src"),
+            html.find('[name="breadcrumbsScale"]').val()
+        )}   
+        }
       },
-      default: 'apply',
+    default: 'apply',
 }).render(true);
 
 async function setupBreadcrumbsActors(enableBreadcrumbs, setForScene, breadcrumbsImage, breadcrumbsScale) {
@@ -106,12 +106,14 @@ async function setupBreadcrumbsActors(enableBreadcrumbs, setForScene, breadcrumb
             }
         }))
         canvas.tokens.controlled.forEach(token => currentScene.update({
-            "flags.breadcrumbs": {
-                actors: {
-                    [token.document.actor.id]: {
-                        src: breadcrumbsImage,
-                        scale: breadcrumbsScale,
-                        tint: null
+            flags: {
+                breadcrumbs: {
+                    actors: {
+                        [token.document.actor.id]: {
+                            src: breadcrumbsImage,
+                            scale: breadcrumbsScale,
+                            tint: null
+                        }
                     }
                 }
             }
