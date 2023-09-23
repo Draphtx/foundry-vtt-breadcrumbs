@@ -1,6 +1,6 @@
 Hooks.on("createToken", function(tokenDocument, options, userId) {
     if((tokenDocument.actor.flags?.breadcrumbs?.enabled == true) || (tokenDocument.flags?.breadcrumbs?.enabled == true)) {
-        console.info("Found Breadcrumbs token")
+        console.info("Found new Breadcrumbs token")
         tokenDocument.update({
             flags: {
                 breadcrumbs: {
@@ -45,7 +45,7 @@ function getRotationAngle(oldX, oldY, newX, newY) {
 
 Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     let movementDirection = undefined
-    const hasBreadcrumbsEnabled = tokenDocument.parent.flags?.breadcrumbs?.enabled;
+    const hasBreadcrumbsEnabled = tokenDocument.parent.flags?.breadcrumbs?.enabled == true && (tokenDocument.flags?.breadcrumbs?.enabled == true || tokenDocument.actor.flags?.breadcrumbs?.enabled == true);
     const hasPositionUpdate = updateData.y || updateData.x;
     
     if (hasBreadcrumbsEnabled && hasPositionUpdate) {
@@ -71,7 +71,7 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
           tint: undefined,
       };
   
-      const actorSettings = actorDocument?.flags?.breadcrumbs || defaultSettings;
+      const actorSettings = actorDocument?.flags?.breadcrumbs?.style || defaultSettings;
       const sceneActorSettings = sceneDocument?.flags?.breadcrumbs?.actors?.[actorDocument._id] || {};
       const sceneDefaultSettings = sceneDocument?.flags?.breadcrumbs?.actors?.default || {};
   

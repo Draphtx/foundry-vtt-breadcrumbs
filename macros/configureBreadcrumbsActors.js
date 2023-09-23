@@ -84,14 +84,16 @@ async function setupBreadcrumbsActors(enableBreadcrumbs, setForScene, breadcrumb
     const enableBreadcrumbsCheckbox = document.getElementById('enableBreadcrumbs');
     const setForSceneCheckbox = document.getElementById('setForScene');
 
-    if(!setForSceneCheckbox) {
+    if(!setForSceneCheckbox.checked) {
         canvas.tokens.controlled.forEach(token => token.document.actor.update({
-            "flags.breadcrumbs": {
-                enabled: enableBreadcrumbsCheckbox.checked,
-                style: {
-                    src: breadcrumbsImage,
-                    scale: breadcrumbsScale,
-                    tint: null
+            flags: {
+                breadcrumbs: {
+                    enabled: enableBreadcrumbsCheckbox.checked,
+                    style: {
+                        src: breadcrumbsImage,
+                        scale: breadcrumbsScale,
+                        tint: null
+                    }
                 }
             }
         }))
