@@ -101,11 +101,12 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
         },
         texture: {
             src: actorSettings.src || game.settings.get("breadcrumbs", "breadcrumbs-default-image"),
+            tint: actorSettings.tint || game.settings.get("breadcrumbs", "breadcrumbs-default-tint"),
             rotation: 0
         },
         x: tokenDocument.x,
         y: tokenDocument.y,
-        width: tokenDocument.parent.grid.size,
+        height: tokenDocument.parent.grid.size,
         width: tokenDocument.parent.grid.size,
         scaleX: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
         scaleY: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),

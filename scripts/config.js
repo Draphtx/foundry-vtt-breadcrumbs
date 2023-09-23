@@ -15,8 +15,18 @@ Hooks.once("init", function () {
         scope: "world",
         config: true,
         filePicker: true,
-        default: 'modules/breadcrumbs/shoeprints.webp',
+        default: 'modules/breadcrumbs/artwork/shoeprints.webp',
         type: String
+    });
+
+    new window.Ardittristan.ColorSetting("breadcrumbs", "breadcrumbs-default-tint", {
+        name: "Default Tint",
+        hint: "A default tint for crumbs",
+        label: "Color Picker",
+        restricted: false,
+        defaultColor: null,
+        scope: "world",
+        //onChange: (value) => {}
     });
 
     game.settings.register("breadcrumbs", "breadcrumbs-default-scale", {
