@@ -1,10 +1,22 @@
 Hooks.on("createToken", function(tokenDocument, options, userId) {
-    if((tokenDocument.actor.flags?.breadcrumbs?.enabled == true) || (tokenDocument.flags?.breadcrumbs?.enabled == true)) {
-        console.info("Found new Breadcrumbs token")
+    if((tokenDocument.actor.flags?.breadcrumbs?.enabled == true) || (tokenDocument.parent.flags?.breadcrumbs?.enabled == true)) {
+          console.debug("Configuring new Breadcrumbs token")
+
         tokenDocument.update({
             flags: {
                 breadcrumbs: {
                     enabled: true,
+                    style: {
+                      src: tokenDocument.parent.flags?.breadcrumbs?.override_actors === true 
+                           ? tokenDocument.parent.flags?.breadcrumbs?.style?.src 
+                           : (tokenDocument.actor.flags?.breadcrumbs?.style?.src || game.settings.get("breadcrumbs", "breadcrumbs-default-image")),
+                      scale: tokenDocument.parent.flags?.breadcrumbs?.override_actors === true 
+                             ? tokenDocument.parent.flags?.breadcrumbs?.style?.scale 
+                             : (tokenDocument.actor.flags?.breadcrumbs?.style?.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale")),
+                      tint: tokenDocument.parent.flags?.breadcrumbs?.override_actors === true 
+                            ? tokenDocument.parent.flags?.breadcrumbs?.style?.tint 
+                            : (tokenDocument.actor.flags?.breadcrumbs?.style?.tint || game.settings.get("breadcrumbs", "breadcrumbs-default-tint")),
+                    },
                     trail: {
                         id: tokenDocument.parent.id + "-" + tokenDocument.id
                     },
@@ -67,29 +79,37 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
         });
     } else { return; };
 
-    function getMergedBreadcrumbsSettings(actorDocument, sceneDocument) {
-      // Default settings, can be extended if there are other defaults
+    function getMergedBreadcrumbsSettings(tokenDocument) {
+      // Default settings
       const defaultSettings = {
           src: null,
           scale: undefined,
           tint: undefined,
       };
   
-      const actorSettings = actorDocument?.flags?.breadcrumbs?.style || defaultSettings;
-      const sceneActorSettings = sceneDocument?.flags?.breadcrumbs?.actors?.[actorDocument._id] || {};
-      const sceneDefaultSettings = sceneDocument?.flags?.breadcrumbs?.actors?.default || {};
+      const actorSettings = tokenDocument.actor.flags?.breadcrumbs?.style || {};
+      const tokenSettings = tokenDocument.flags?.breadcrumbs?.style || {};
+      const sceneSettings = tokenDocument.parent.flags?.breadcrumbs?.style || {};
   
-      let mergedSettings = { ...defaultSettings, ...actorSettings };  // Start with actor settings
+      let mergedSettings = { ...defaultSettings };
   
-      // If override is enabled, use scene's settings
-      if (sceneDocument?.flags?.breadcrumbs?.override_actors) {
-          mergedSettings = { ...mergedSettings, ...sceneDefaultSettings, ...sceneActorSettings };
+      // If token settings are defined, they take precedence
+      if (Object.keys(tokenSettings).length > 0) {
+          mergedSettings = { ...mergedSettings, ...tokenSettings };
+      } 
+      // If token settings aren't defined, check for `override_actors`
+      else if (tokenDocument.parent.flags?.breadcrumbs?.override_actors) {
+          mergedSettings = { ...mergedSettings, ...sceneSettings };
+      } 
+      // If token settings aren't defined and `override_actors` isn't enabled, fall back to actor settings
+      else {
+          mergedSettings = { ...mergedSettings, ...actorSettings };
       }
   
       return mergedSettings;
-  };  
+    };  
+    const actorSettings = getMergedBreadcrumbsSettings(tokenDocument);
 
-    const actorSettings = getMergedBreadcrumbsSettings(tokenDocument.actor, tokenDocument.parent);
     breadcrumbsTileDefinition = {
         flags: {
             breadcrumbs: {

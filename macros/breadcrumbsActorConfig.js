@@ -26,7 +26,7 @@ const loadoutsTileDialog = new Dialog({
     <fieldset>
     
     <!-- Form Name -->
-    <legend>Actor Configuration</legend>
+    <legend>Actor & Token Controls</legend>
 
     <!-- Boolean input-->
     <div class="form-group">
@@ -37,12 +37,19 @@ const loadoutsTileDialog = new Dialog({
     </div>
     
     <div class="form-group">
-      <label class="col-md-4 control-label" for="setForScene">Limit to Scene?</label>  
+      <label class="col-md-4 control-label" for="applyToActor">Apply to Actor</label>  
       <div class="col-md-4">
-      <input id="setForScene" name="setForScene" type="checkbox"></input>
+      <input id="applyToActor" name="applyToActor" type="checkbox"></input>
       </div>
     </div>
 
+    </fieldset>
+    </form>
+
+    <form class="form-horizontal">
+    <fieldset>
+    <legend>Image Properties</legend>
+    
     <div class="form-group">
         <label>Breadcrumbs Image</label>
         <button onclick="fileBrowser()">
@@ -50,15 +57,22 @@ const loadoutsTileDialog = new Dialog({
         </button>
     </div>
 
+    <div class="form-group">
+        <label>Image Tint</label>
+        <input type="text" name="imageTint" is="colorpicker-input" data-responsive-color>
+    </div>
+
     <!-- Range input-->
     <div class="form-group">
-      <label class="col-md-4 control-label" for="breadcrumbsScale">Breadcrumbs Scale</label>  
+      <label class="col-md-4 control-label" for="imageScale">Image Scale</label>  
       <div class="col-md-4">
-      <input id="breadcrumbsScale" name="breadcrumbsScale" type="range" min="0.1" max="1" step="0.1" defaultValue="1" value="1" oninput="document.getElementById('rangeValLabel').innerHTML = this.value;"></input>
+      <input id="imageScale" name="imageScale" type="range" min="0.1" max="1" step="0.1" defaultValue="1" value="1" oninput="document.getElementById('rangeValLabel').innerHTML = this.value;"></input>
       <span class="help-block">Scale: </span>
       <em id="rangeValLabel" style="font-style: normal;">1</em>
       </div>
     </div>
+    </fieldset>
+    </form>
     `,
     buttons: {
     cancel: {
@@ -71,49 +85,42 @@ const loadoutsTileDialog = new Dialog({
         label: `Apply Changes` ,
         callback: html => {setupBreadcrumbsActors(
             html.find('[name="enableBreadcrumbs"]').val(),
-            html.find('[name="setForScene"]').val(),
+            html.find('[name="applyToActor"]').val(),
             html.find("#breadcrumbsImagePreview").attr("src"),
-            html.find('[name="breadcrumbsScale"]').val()
+            html.find('[name="imageTint"]').val(),
+            html.find('[name="imageScale"]').val()
         )}   
         }
       },
     default: 'apply',
 }).render(true);
 
-async function setupBreadcrumbsActors(enableBreadcrumbs, setForScene, breadcrumbsImage, breadcrumbsScale) {
+async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrumbsImage, imageTint, imageScale) {
     const enableBreadcrumbsCheckbox = document.getElementById('enableBreadcrumbs');
     const setForSceneCheckbox = document.getElementById('setForScene');
 
-    if(!setForSceneCheckbox.checked) {
+    if(applyToActor.checked) {
         canvas.tokens.controlled.forEach(token => token.document.actor.update({
             flags: {
                 breadcrumbs: {
                     enabled: enableBreadcrumbsCheckbox.checked,
                     style: {
                         src: breadcrumbsImage,
-                        scale: breadcrumbsScale,
-                        tint: null
+                        scale: imageScale,
+                        tint: imageTint.substring(0, 7)
                     }
                 }
             }
-        }))
+        }));
     } else {
         canvas.tokens.controlled.forEach(token => token.document.update({
             flags: {
                 breadcrumbs: {
                     enabled: enableBreadcrumbsCheckbox.checked,
-                }
-            }
-        }))
-        canvas.tokens.controlled.forEach(token => currentScene.update({
-            flags: {
-                breadcrumbs: {
-                    actors: {
-                        [token.document.actor.id]: {
-                            src: breadcrumbsImage,
-                            scale: breadcrumbsScale,
-                            tint: null
-                        }
+                    style: {
+                        src: breadcrumbsImage,
+                        scale: imageScale,
+                        tint: imageTint
                     }
                 }
             }
