@@ -10,12 +10,23 @@
         "url": "https://www.buymeacoffee.com/draphtx"
       }
     ],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "minimumCoreVersion" : "10.291",
     "compatibleCoreVersion" : 10,
     "compatibility": {
         "minimum": "10",
         "verified": "10"
+    },
+    "relationships": {
+      "requires": [
+        {
+          "id": "colorsettings",
+          "type": "module",
+          "compatibility": {
+            "verified": "2.9.0"
+          }
+        }
+      ]
     },
     "scripts": [
         "scripts/breadcrumbs.js",
@@ -44,7 +55,7 @@
       },
       {
           "type": "screenshot",
-          "link": "https://raw.githubusercontent.com/Draphtx/foundry-vtt-loadouts/continuous/artwork/module/screenshot-v2.1.9a.png"
+          "link": "https://raw.githubusercontent.com/Draphtx/foundry-vtt-breadcrumbs/continuous/artwork/module/breadcrumbs-hex.gif"
       }
     ],
     "url": "#{URL}#",

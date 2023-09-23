@@ -1,4 +1,4 @@
-Hooks.once("init", function () {  // Due to some of the calls we make to populate lists, this can't register at init time
+Hooks.once("init", function () {
 
     game.settings.register("breadcrumbs", "breadcrumbs-enabled", {
         name: "Enable Breadcrumbs",
@@ -10,17 +10,27 @@ Hooks.once("init", function () {  // Due to some of the calls we make to populat
     });
 
     game.settings.register("breadcrumbs", "breadcrumbs-default-image", {
-        name: "Breadcrumbs Default Image",
+        name: "Default Image",
         hint: "Per-scene images can be configured using the scene configuration macro",
         scope: "world",
         config: true,
         filePicker: true,
-        default: 'modules/breadcrumbs/shoeprints.webp',
+        default: 'modules/breadcrumbs/artwork/shoeprints.webp',
         type: String
     });
 
+    new window.Ardittristan.ColorSetting("breadcrumbs", "breadcrumbs-default-tint", {
+        name: "Default Tint",
+        hint: "A default tint for crumbs",
+        label: "Color Picker",
+        restricted: false,
+        defaultColor: null,
+        scope: "world",
+        //onChange: (value) => {}
+    });
+
     game.settings.register("breadcrumbs", "breadcrumbs-default-scale", {
-        name: "Breadcrumbs Default Image Scale",
+        name: "Default Image Scale",
         hint: "Scale of Breadcrumbs images",
         scope: "world",
         config: true,
