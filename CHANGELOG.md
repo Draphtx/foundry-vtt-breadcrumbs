@@ -6,4 +6,4 @@
 - reworked settings precedence for convenience and flexibility
 
 ## 1.0.0a
-- initial alpha release of loval code snippets
+- initial alpha release of local code snippets

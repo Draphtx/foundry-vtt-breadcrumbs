@@ -10,7 +10,7 @@ Hooks.once("init", function () {
     });
 
     game.settings.register("breadcrumbs", "breadcrumbs-default-image", {
-        name: "Breadcrumbs Default Image",
+        name: "Default Image",
         hint: "Per-scene images can be configured using the scene configuration macro",
         scope: "world",
         config: true,
@@ -30,7 +30,7 @@ Hooks.once("init", function () {
     });
 
     game.settings.register("breadcrumbs", "breadcrumbs-default-scale", {
-        name: "Breadcrumbs Default Image Scale",
+        name: "Default Image Scale",
         hint: "Scale of Breadcrumbs images",
         scope: "world",
         config: true,
