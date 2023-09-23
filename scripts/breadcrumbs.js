@@ -101,7 +101,7 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
         },
         texture: {
             src: actorSettings.src || game.settings.get("breadcrumbs", "breadcrumbs-default-image"),
-            tint: actorSettings.tint || game.settings.get("breadcrumbs", "breadcrumbs-default-tint"),
+            tint: actorSettings.tint || game.settings.get("breadcrumbs", "breadcrumbs-default-tint").substring(0, 7),
             rotation: 0
         },
         x: tokenDocument.x,
