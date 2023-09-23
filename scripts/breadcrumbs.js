@@ -4,6 +4,7 @@ Hooks.on("createToken", function(tokenDocument, options, userId) {
         tokenDocument.update({
             flags: {
                 breadcrumbs: {
+                    enabled: true,
                     trail: {
                         id: tokenDocument.parent.id + "-" + tokenDocument.id
                     },
@@ -45,11 +46,15 @@ function getRotationAngle(oldX, oldY, newX, newY) {
 
 Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     let movementDirection = undefined
-    const hasBreadcrumbsEnabled = tokenDocument.parent.flags?.breadcrumbs?.enabled == true && (tokenDocument.flags?.breadcrumbs?.enabled == true || tokenDocument.actor.flags?.breadcrumbs?.enabled == true);
+    const hasBreadcrumbsEnabled = tokenDocument.parent.flags?.breadcrumbs?.enabled == true && (
+        tokenDocument.flags?.breadcrumbs?.enabled == true || tokenDocument.actor.flags?.breadcrumbs?.enabled == true);
     const hasPositionUpdate = updateData.y || updateData.x;
     
     if (hasBreadcrumbsEnabled && hasPositionUpdate) {
-        movementDirection = getRotationAngle(tokenDocument.flags.breadcrumbs.position.last_x, tokenDocument.flags.breadcrumbs.position.last_y, tokenDocument.x, tokenDocument.y);
+        movementDirection = getRotationAngle(
+            tokenDocument.flags.breadcrumbs.position.last_x, 
+            tokenDocument.flags.breadcrumbs.position.last_y, 
+            tokenDocument.x, tokenDocument.y);
         tokenDocument.update({
             flags: {
                 breadcrumbs: {
@@ -61,7 +66,6 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
             }
         });
     } else { return; };
-    console.debug("Breadcrumbs token moved at angle " + movementDirection);
 
     function getMergedBreadcrumbsSettings(actorDocument, sceneDocument) {
       // Default settings, can be extended if there are other defaults
@@ -101,8 +105,8 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
         },
         x: tokenDocument.x,
         y: tokenDocument.y,
-        width: 100,
-        height: 100,
+        width: tokenDocument.parent.grid.size,
+        width: tokenDocument.parent.grid.size,
         scaleX: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
         scaleY: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
         rotation: movementDirection
@@ -112,7 +116,8 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
 
     // Check the trail length for user-defined limits
     let maxTrailLength = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
-    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
+    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(
+        tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
     existingBreadcrumbs.sort((a, b) => a.flags.breadcrumbs.trail.timestamp - b.flags.breadcrumbs.trail.timestamp);
 
     while (existingBreadcrumbs.length > maxTrailLength) {
