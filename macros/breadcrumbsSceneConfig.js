@@ -117,7 +117,7 @@ const loadoutsTileDialog = new Dialog({
       default: 'apply',
 }).render(true);
 
-async function setupBreadcrumbsScene(enableBreadcrumbs, overrideActors, breadcrumbsImage, imageTint, breadcrumbsScale, trailLength){
+async function setupBreadcrumbsScene(enableBreadcrumbs, overrideActors, breadcrumbsImage, imageTint, breadcrumbsScale, trailLength, alternateSides){
     const enableBreadcrumbsCheckbox = document.getElementById('enableBreadcrumbs');
     const overrideActorsCheckbox = document.getElementById('overrideActors');
     const alternateSidesCheckbox = document.getElementById('alternateSides');
