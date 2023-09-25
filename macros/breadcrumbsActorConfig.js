@@ -71,6 +71,21 @@ const loadoutsTileDialog = new Dialog({
       <em id="rangeValLabel" style="font-style: normal;">1</em>
       </div>
     </div>
+
+    </fieldset>
+    </form>
+
+    <form class="form-horizontal">
+    <fieldset>
+    <legend>Trail Properties</legend>
+
+    <div class="form-group">
+      <label class="col-md-4 control-label" for="alternateSidess">Alternate Sides</label>
+      <div class="col-md-4">
+      <input id="alternateSides" name="alternateSides" type="checkbox"></input>
+      </div>
+    </div>
+
     </fieldset>
     </form>
     `,
@@ -88,16 +103,18 @@ const loadoutsTileDialog = new Dialog({
             html.find('[name="applyToActor"]').val(),
             html.find("#breadcrumbsImagePreview").attr("src"),
             html.find('[name="imageTint"]').val(),
-            html.find('[name="imageScale"]').val()
+            html.find('[name="imageScale"]').val(),
+            html.find('[name="alternateSides"]').val(),
         )}   
         }
       },
     default: 'apply',
 }).render(true);
 
-async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrumbsImage, imageTint, imageScale) {
+async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrumbsImage, imageTint, imageScale, alternateSides) {
     const enableBreadcrumbsCheckbox = document.getElementById('enableBreadcrumbs');
     const setForSceneCheckbox = document.getElementById('setForScene');
+    const alternateSidesCheckbox = document.getElementById('alternateSides');
 
     if(applyToActor.checked) {
         canvas.tokens.controlled.forEach(token => token.document.actor.update({
@@ -107,7 +124,8 @@ async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrum
                     style: {
                         src: breadcrumbsImage,
                         scale: imageScale,
-                        tint: imageTint.substring(0, 7)
+                        tint: imageTint.substring(0, 7),
+                        alternating: alternateSidesCheckbox.checked
                     }
                 }
             }
@@ -120,7 +138,8 @@ async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrum
                     style: {
                         src: breadcrumbsImage,
                         scale: imageScale,
-                        tint: imageTint.substring(0, 7)
+                        tint: imageTint.substring(0, 7),
+                        alternating: alternateSidesCheckbox.checked
                     }
                 }
             }

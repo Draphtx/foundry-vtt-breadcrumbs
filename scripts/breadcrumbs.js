@@ -16,17 +16,28 @@ Hooks.on("createToken", function(tokenDocument, options, userId) {
                       tint: tokenDocument.parent.flags?.breadcrumbs?.override_actors === true 
                             ? tokenDocument.parent.flags?.breadcrumbs?.style?.tint 
                             : (tokenDocument.actor.flags?.breadcrumbs?.style?.tint || game.settings.get("breadcrumbs", "breadcrumbs-default-tint")),
+                      alternating: tokenDocument.parent.flags?.breadcrumbs?.override_actors === true 
+                            ? tokenDocument.parent.flags?.breadcrumbs?.style?.alternating 
+                            : (tokenDocument.actor.flags?.breadcrumbs?.style?.alternating || false),    
                     },
                     trail: {
                         id: tokenDocument.parent.id + "-" + tokenDocument.id,
                         timestamp: Date.now(),
-                        alternating: tokenDocument.parent.flags?.breadcrumbs?.override_actors === true 
-                                      ? tokenDocument.parent.flags?.breadcrumbs?.style?.alternating 
-                                      : (tokenDocument.actor.flags?.breadcrumbs?.style?.alternating || false),
                     },
                     position: {
                         last_x: tokenDocument.x, 
                         last_y: tokenDocument.y
+                    }
+                }
+            }
+        });
+        tokenDocument.parent.update({
+            flags: {
+                breadcrumbs: {
+                    trails: {
+                        [tokenDocument.parent.id + "-" + tokenDocument.id]: {
+                            totalCrumbs: 1
+                        }
                     }
                 }
             }
@@ -115,14 +126,9 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     const actorSettings = getMergedBreadcrumbsSettings(tokenDocument);
 
     let maxTrailLength = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
-    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(
-        tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
-    console.log(existingBreadcrumbs)
-    const isAlternate = (existingBreadcrumbs.length + 1) % 2 !== 0;
-    console.log(isAlternate)
-    if (isAlternate === true) {
-        console.log("Found alternating footprint")
-    }
+    let trailCrumbCount = tokenDocument.parent.flags?.breadcrumbs?.trails?.[tokenDocument.parent.id + "-" + tokenDocument.id].totalCrumbs
+
+    const isAlternate = (trailCrumbCount + 1) % 2 !== 0 && tokenDocument.flags.breadcrumbs.style.alternating === true;
 
     breadcrumbsTileDefinition = {
         flags: {
@@ -148,10 +154,24 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     };
 
     await tokenDocument.parent.createEmbeddedDocuments("Tile", [breadcrumbsTileDefinition]);
-    
-    existingBreadcrumbs.sort((a, b) => a.flags.breadcrumbs.trail.timestamp - b.flags.breadcrumbs.trail.timestamp);
+
+    tokenDocument.parent.update({
+        flags: {
+            breadcrumbs: {
+                trails: {
+                    [tokenDocument.parent.id + "-" + tokenDocument.id]: {
+                        totalCrumbs: trailCrumbCount + 1
+                    }
+                }
+            }
+        }
+    });
+
+    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(
+        tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
 
     while (existingBreadcrumbs.length > maxTrailLength) {
+        existingBreadcrumbs.sort((a, b) => a.flags.breadcrumbs.trail.timestamp - b.flags.breadcrumbs.trail.timestamp);
         let oldestTile = existingBreadcrumbs.shift();  // Removes the first (oldest) tile from the array
         oldestTile.delete();
     };

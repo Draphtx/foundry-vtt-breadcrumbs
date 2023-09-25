@@ -84,6 +84,13 @@ const loadoutsTileDialog = new Dialog({
       <input type="number" id="trailLength" name="trailLength" value="` + game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length") + `" min="0" max="99" oninput="limitTrailLength(this)">
     </div>
 
+    <div class="form-group">
+      <label class="col-md-4 control-label" for="alternateSidess">Alternate Sides</label>
+      <div class="col-md-4">
+        <input id="alternateSides" name="alternateSides" type="checkbox"></input>
+      </div>
+    </div>
+
     </fieldset>
     </form>
     `,
@@ -102,7 +109,8 @@ const loadoutsTileDialog = new Dialog({
                 html.find("#breadcrumbsImagePreview").attr("src"),
                 html.find('[name="imageTint"]').val(),
                 html.find('[name="breadcrumbsScale"]').val(),
-                html.find('[name="trailLength"]').val()
+                html.find('[name="trailLength"]').val(),
+                html.find('[name="alternateSides"]').val()
             )}   
             }
       },
@@ -112,6 +120,8 @@ const loadoutsTileDialog = new Dialog({
 async function setupBreadcrumbsScene(enableBreadcrumbs, overrideActors, breadcrumbsImage, imageTint, breadcrumbsScale, trailLength){
     const enableBreadcrumbsCheckbox = document.getElementById('enableBreadcrumbs');
     const overrideActorsCheckbox = document.getElementById('overrideActors');
+    const alternateSidesCheckbox = document.getElementById('alternateSides');
+
     currentScene.update({
         "flags.breadcrumbs": {
             enabled: enableBreadcrumbsCheckbox.checked,
@@ -119,7 +129,8 @@ async function setupBreadcrumbsScene(enableBreadcrumbs, overrideActors, breadcru
             style: {
                 src: breadcrumbsImage,
                 scale: breadcrumbsScale,
-                tint: imageTint.substring(0, 7)
+                tint: imageTint.substring(0, 7),
+                alternateSides: alternateSidesCheckbox.checked
             },
             trails: {
                 length: {
