@@ -1,5 +1,9 @@
 # foundry-vtt-breadcrumbs
 
+## 1.0.2
+- Support for alternating footprints
+- Bugfixes
+
 ## 1.0.1
 - integrated dependency on color settings module for tint control
 - completed settings for tint control
