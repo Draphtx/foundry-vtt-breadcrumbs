@@ -66,8 +66,8 @@ const loadoutsTileDialog = new Dialog({
     <div class="form-group">
       <label class="col-md-4 control-label" for="imageScale">Image Scale</label>  
       <div class="col-md-4">
-      <input id="imageScale" name="imageScale" type="range" min="0.1" max="1" step="0.1" defaultValue="1" value="1" oninput="document.getElementById('rangeValLabel').innerHTML = this.value;"></input>
-      <span class="help-block">Scale: </span>
+        <input id="imageScale" name="imageScale" type="range" min="0.1" max="1" step="0.1" defaultValue="1" value="1" oninput="document.getElementById('rangeValLabel').innerHTML = this.value;"></input>
+        <span class="help-block">Scale: </span>
       <em id="rangeValLabel" style="font-style: normal;">1</em>
       </div>
     </div>
@@ -120,7 +120,7 @@ async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrum
                     style: {
                         src: breadcrumbsImage,
                         scale: imageScale,
-                        tint: imageTint
+                        tint: imageTint.substring(0, 7)
                     }
                 }
             }

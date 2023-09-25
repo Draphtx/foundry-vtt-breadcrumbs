@@ -18,7 +18,11 @@ Hooks.on("createToken", function(tokenDocument, options, userId) {
                             : (tokenDocument.actor.flags?.breadcrumbs?.style?.tint || game.settings.get("breadcrumbs", "breadcrumbs-default-tint")),
                     },
                     trail: {
-                        id: tokenDocument.parent.id + "-" + tokenDocument.id
+                        id: tokenDocument.parent.id + "-" + tokenDocument.id,
+                        timestamp: Date.now(),
+                        alternating: tokenDocument.parent.flags?.breadcrumbs?.override_actors === true 
+                                      ? tokenDocument.parent.flags?.breadcrumbs?.style?.alternating 
+                                      : (tokenDocument.actor.flags?.breadcrumbs?.style?.alternating || false),
                     },
                     position: {
                         last_x: tokenDocument.x, 
@@ -110,6 +114,16 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     };  
     const actorSettings = getMergedBreadcrumbsSettings(tokenDocument);
 
+    let maxTrailLength = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
+    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(
+        tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
+    console.log(existingBreadcrumbs)
+    const isAlternate = (existingBreadcrumbs.length + 1) % 2 !== 0;
+    console.log(isAlternate)
+    if (isAlternate === true) {
+        console.log("Found alternating footprint")
+    }
+
     breadcrumbsTileDefinition = {
         flags: {
             breadcrumbs: {
@@ -122,23 +136,19 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
         texture: {
             src: actorSettings.src || game.settings.get("breadcrumbs", "breadcrumbs-default-image"),
             tint: actorSettings.tint || game.settings.get("breadcrumbs", "breadcrumbs-default-tint").substring(0, 7),
+            scaleX: isAlternate ? -(actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale")) : (actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale")),
+            scaleY: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
             rotation: 0
         },
         x: tokenDocument.x,
         y: tokenDocument.y,
         height: tokenDocument.parent.grid.size,
         width: tokenDocument.parent.grid.size,
-        scaleX: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
-        scaleY: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
         rotation: movementDirection
     };
 
     await tokenDocument.parent.createEmbeddedDocuments("Tile", [breadcrumbsTileDefinition]);
-
-    // Check the trail length for user-defined limits
-    let maxTrailLength = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
-    let existingBreadcrumbs = tokenDocument.parent.tiles.filter(
-        tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
+    
     existingBreadcrumbs.sort((a, b) => a.flags.breadcrumbs.trail.timestamp - b.flags.breadcrumbs.trail.timestamp);
 
     while (existingBreadcrumbs.length > maxTrailLength) {
