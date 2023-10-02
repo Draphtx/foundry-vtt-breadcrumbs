@@ -127,9 +127,8 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
 
     let maxTrailLength = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
     let trailCrumbCount = tokenDocument.parent.flags?.breadcrumbs?.trails?.[tokenDocument.parent.id + "-" + tokenDocument.id].totalCrumbs
-
     const isAlternate = (trailCrumbCount + 1) % 2 !== 0 && tokenDocument.flags.breadcrumbs.style.alternating === true;
-    
+
     breadcrumbsTileDefinition = {
         flags: {
             breadcrumbs: {
@@ -146,8 +145,8 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
             scaleY: actorSettings.scale * tokenDocument.height || game.settings.get("breadcrumbs", "breadcrumbs-default-scale") * tokenDocument.height,
             rotation: 0
         },
-        x: tokenDocument.x + ((tokenDocument.width / 2) * tokenDocument.parent.grid.size / 2),
-        y: tokenDocument.y + ((tokenDocument.height / 2) * tokenDocument.parent.grid.size / 2),
+        x: tokenDocument.x + (tokenDocument.width > 1.0 ? (tokenDocument.width / 2) * (tokenDocument.parent.grid.size / 2) : 0),
+        y: tokenDocument.y + (tokenDocument.height > 1.0 ? (tokenDocument.height / 2) * (tokenDocument.parent.grid.size / 2) : 0),
         height: tokenDocument.parent.grid.size,
         width: tokenDocument.parent.grid.size,
         rotation: movementDirection
