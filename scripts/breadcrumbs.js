@@ -78,20 +78,27 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
     const hasPositionUpdate = updateData.y || updateData.x;
     
     if (hasBreadcrumbsEnabled && hasPositionUpdate) {
-        movementDirection = getRotationAngle(
-            tokenDocument.flags.breadcrumbs.position.last_x, 
-            tokenDocument.flags.breadcrumbs.position.last_y, 
-            tokenDocument.x, tokenDocument.y);
-        tokenDocument.update({
-            flags: {
-                breadcrumbs: {
-                    position: {
-                        last_x: tokenDocument.x, 
-                        last_y: tokenDocument.y
+        // If the token has not moved at least half of its size, do not produce a Crumb
+        if ((Math.abs(tokenDocument.x - tokenDocument.flags.breadcrumbs.position.last_x) < (tokenDocument.width * tokenDocument.parent.grid.size / 2)) && 
+            (Math.abs(tokenDocument.y - tokenDocument.flags.breadcrumbs.position.last_y) < (tokenDocument.height * tokenDocument.parent.grid.size / 2))) 
+            {
+                return;
+            } else {
+                movementDirection = getRotationAngle(
+                    tokenDocument.flags.breadcrumbs.position.last_x, 
+                    tokenDocument.flags.breadcrumbs.position.last_y, 
+                    tokenDocument.x, tokenDocument.y);
+                tokenDocument.update({
+                    flags: {
+                        breadcrumbs: {
+                            position: {
+                                last_x: tokenDocument.x, 
+                                last_y: tokenDocument.y
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
+            };
     } else { return; };
 
     function getMergedBreadcrumbsSettings(tokenDocument) {
@@ -127,7 +134,6 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
 
     let maxTrailLength = tokenDocument.parent.flags.breadcrumbs?.trails?.length?.max || game.settings.get("breadcrumbs", "breadcrumbs-default-trail-length");
     let trailCrumbCount = tokenDocument.parent.flags?.breadcrumbs?.trails?.[tokenDocument.parent.id + "-" + tokenDocument.id].totalCrumbs
-
     const isAlternate = (trailCrumbCount + 1) % 2 !== 0 && tokenDocument.flags.breadcrumbs.style.alternating === true;
 
     breadcrumbsTileDefinition = {
@@ -142,12 +148,12 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
         texture: {
             src: actorSettings.src || game.settings.get("breadcrumbs", "breadcrumbs-default-image"),
             tint: actorSettings.tint || game.settings.get("breadcrumbs", "breadcrumbs-default-tint").substring(0, 7),
-            scaleX: isAlternate ? -(actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale")) : (actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale")),
-            scaleY: actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale"),
+            scaleX: isAlternate ? -(actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale")) * tokenDocument.width: (actorSettings.scale || game.settings.get("breadcrumbs", "breadcrumbs-default-scale")) * tokenDocument.width,
+            scaleY: actorSettings.scale * tokenDocument.height || game.settings.get("breadcrumbs", "breadcrumbs-default-scale") * tokenDocument.height,
             rotation: 0
         },
-        x: tokenDocument.x,
-        y: tokenDocument.y,
+        x: tokenDocument.x + (tokenDocument.width * tokenDocument.parent.grid.size) / 2 - tokenDocument.parent.grid.size / 2,
+        y: tokenDocument.y + (tokenDocument.height * tokenDocument.parent.grid.size) / 2 - tokenDocument.parent.grid.size / 2,
         height: tokenDocument.parent.grid.size,
         width: tokenDocument.parent.grid.size,
         rotation: movementDirection
@@ -166,6 +172,8 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
             }
         }
     });
+    
+    Hooks.call('createBreadcrumb');
 
     let existingBreadcrumbs = tokenDocument.parent.tiles.filter(
         tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);
