@@ -172,6 +172,8 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
             }
         }
     });
+    
+    Hooks.call('createBreadcrumb');
 
     let existingBreadcrumbs = tokenDocument.parent.tiles.filter(
         tile => tile.flags?.breadcrumbs?.trail?.id == tokenDocument.parent.id + "-" + tokenDocument.id);

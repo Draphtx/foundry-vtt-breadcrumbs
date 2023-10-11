@@ -39,11 +39,13 @@ Foundry VTT Breadcrumbs adds configurable tile-based trails to the tokens of any
 
 `Apply to Actor` If left unchecked, the configuration options will be set on the token or tokens directly, bypassing any scene-specific configurations. If checked, the settings will propogate to the actor, becoming the default for all of that actor's newly-placed tokens and being subject to the `Override Actors` setting in [Scene Options](#scene-options).
 
-`Image` The token or actor's default Breadcrumbs image.
+`Breadcrumbs Image` The token or actor's default Breadcrumbs image.
 
-`Tint` The token or actor's default Breadcrumbs tint.
+`Image Tint` The token or actor's default Breadcrumbs tint.
 
-`Scale` The token or actor's default Breadcrumbs scale.
+`Image Scale` The token or actor's default Breadcrumbs scale. If this is not specified (i.e. '1') crumbs will scale along with the parent token's scale.
+
+`Alternate Sides` Mirror every-other Breadcrumb created. This allows for a 'right-foot, left-foot' pattern where each Breadcrumb is a single step in the token's 'stride.' This is especially effective for giant footprints etc where each grid space moved through represents only a portion of the creature's overall token area.
 
 # Media
 ![Hex Crawls](artwork/module/breadcrumbs-hex.gif)
