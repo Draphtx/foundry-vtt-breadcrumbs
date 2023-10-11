@@ -152,8 +152,8 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
             scaleY: actorSettings.scale * tokenDocument.height || game.settings.get("breadcrumbs", "breadcrumbs-default-scale") * tokenDocument.height,
             rotation: 0
         },
-        x: tokenDocument.x + ((tokenDocument.width * tokenDocument.parent.grid.size) / tokenDocument.width) - tokenDocument.parent.grid.size / tokenDocument.width,
-        y: tokenDocument.y + ((tokenDocument.height * tokenDocument.parent.grid.size) / tokenDocument.height) - tokenDocument.parent.grid.size / tokenDocument.height,
+        x: tokenDocument.x + (tokenDocument.width * tokenDocument.parent.grid.size) / 2 - tokenDocument.parent.grid.size / 2,
+        y: tokenDocument.y + (tokenDocument.height * tokenDocument.parent.grid.size) / 2 - tokenDocument.parent.grid.size / 2,
         height: tokenDocument.parent.grid.size,
         width: tokenDocument.parent.grid.size,
         rotation: movementDirection
