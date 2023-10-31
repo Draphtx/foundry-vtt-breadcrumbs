@@ -50,6 +50,7 @@ function getRotationAngle(oldX, oldY, newX, newY) {
   let dx = newX - oldX;
   let dy = newY - oldY;
 
+  // Figure out which direction the token moved in to orient the tile
   if (dx === 0 && dy > 0) {
     return 0;  // South
   } else if (dx > 0 && dy < 0) {
@@ -67,7 +68,7 @@ function getRotationAngle(oldX, oldY, newX, newY) {
   } else if (dx > 0 && dy > 0) {
     return 315;  // South-East
   } else {
-    return null;  // Token didn't move or moved in an unexpected way
+    return null;
   }
 };
 
