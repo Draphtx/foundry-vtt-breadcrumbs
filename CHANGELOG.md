@@ -1,5 +1,8 @@
 # foundry-vtt-breadcrumbs
 
+## 1.0.5
+- Added hidden (invisible) trail option
+
 ## 1.0.4
 - Lots of code improvements
 - Crumbs are now properly-aligned behind tokens regardless of scale

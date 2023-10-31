@@ -156,6 +156,7 @@ Hooks.on("updateToken", async function(tokenDocument, updateData, _, _) {
         y: tokenDocument.y + (tokenDocument.height * tokenDocument.parent.grid.size) / 2 - tokenDocument.parent.grid.size / 2,
         height: tokenDocument.parent.grid.size,
         width: tokenDocument.parent.grid.size,
+        hidden: actorSettings.hidden || game.settings.get("breadcrumbs", "breadcrumbs-hidden") || false,
         rotation: movementDirection
     };
 

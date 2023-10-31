@@ -86,6 +86,13 @@ const loadoutsTileDialog = new Dialog({
       </div>
     </div>
 
+    <div class="form-group">
+      <label class="col-md-4 control-label" for="isHidden">Hidden</label>
+      <div class="col-md-4">
+      <input id="isHidden" name="isHidden" type="checkbox"></input>
+      </div>
+    </div>
+
     </fieldset>
     </form>
     `,
@@ -105,16 +112,18 @@ const loadoutsTileDialog = new Dialog({
             html.find('[name="imageTint"]').val(),
             html.find('[name="imageScale"]').val(),
             html.find('[name="alternateSides"]').val(),
+            html.find('[name="isHidden"]').val(),
         )}   
         }
       },
     default: 'apply',
 }).render(true);
 
-async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrumbsImage, imageTint, imageScale, alternateSides) {
+async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrumbsImage, imageTint, imageScale, alternateSides, isHidden) {
     const enableBreadcrumbsCheckbox = document.getElementById('enableBreadcrumbs');
     const setForSceneCheckbox = document.getElementById('setForScene');
     const alternateSidesCheckbox = document.getElementById('alternateSides');
+    const isHiddenCheckbox = document.getElementById('alternateSides');
 
     if(applyToActor.checked) {
         canvas.tokens.controlled.forEach(token => token.document.actor.update({
@@ -125,7 +134,8 @@ async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrum
                         src: breadcrumbsImage,
                         scale: imageScale,
                         tint: imageTint.substring(0, 7),
-                        alternating: alternateSidesCheckbox.checked
+                        alternating: alternateSidesCheckbox.checked,
+                        hidden: isHiddenCheckbox.checked
                     }
                 }
             }
@@ -139,7 +149,8 @@ async function setupBreadcrumbsActors(enableBreadcrumbs, applyToActor, breadcrum
                         src: breadcrumbsImage,
                         scale: imageScale,
                         tint: imageTint.substring(0, 7),
-                        alternating: alternateSidesCheckbox.checked
+                        alternating: alternateSidesCheckbox.checked,
+                        hidden: isHiddenCheckbox.checked
                     }
                 }
             }

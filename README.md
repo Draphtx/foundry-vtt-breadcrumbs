@@ -17,6 +17,8 @@ Foundry VTT Breadcrumbs adds configurable tile-based trails to the tokens of any
 
 `Max Trail Length` The maximum number of crumbs in a given trail. Can be overriden at the scene level.
 
+`Hidden` Breadcrumbs trails are only visible to the GM role.
+
 ## <a name="scene-options"></a>Scene Options
 #### To set these options, use the included `breadcrumbsSceneConfig` macro to apply settings to the currently-viewed scene.
 
@@ -46,6 +48,8 @@ Foundry VTT Breadcrumbs adds configurable tile-based trails to the tokens of any
 `Image Scale` The token or actor's default Breadcrumbs scale. If this is not specified (i.e. '1') crumbs will scale along with the parent token's scale.
 
 `Alternate Sides` Mirror every-other Breadcrumb created. This allows for a 'right-foot, left-foot' pattern where each Breadcrumb is a single step in the token's 'stride.' This is especially effective for giant footprints etc where each grid space moved through represents only a portion of the creature's overall token area.
+
+`Hidden` An actor-specific override for the Hidden setting in [World Options](#world-options).
 
 # Media
 ![Hex Crawls](artwork/module/breadcrumbs-hex.gif)

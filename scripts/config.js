@@ -57,4 +57,13 @@ Hooks.once("init", function () {
         }
     });
 
+    game.settings.register("breadcrumbs", "breadcrumbs-hidden", {
+        name: "Hidden",
+        hint: "Trails are only visible to the GM role",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+
 });
